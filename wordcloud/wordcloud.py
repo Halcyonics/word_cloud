@@ -18,7 +18,7 @@ from .query_integral_image import query_integral_image
 
 item1 = itemgetter(1)
 
-FONT_PATH = os.environ.get("FONT_PATH", "/usr/share/fonts/truetype/droid/DroidSansMono.ttf")
+FONT_PATH = os.environ.get("FONT_PATH", "C:\verdana.ttf")
 STOPWORDS = set([x.strip() for x in open(os.path.join(os.path.dirname(__file__),
                                                       'stopwords')).read().split('\n')])
 
@@ -94,7 +94,7 @@ class WordCloud(object):
     """
 
     def __init__(self, font_path=None, width=400, height=200, margin=5,
-                 ranks_only=False, prefer_horizontal=0.9, mask=None, scale=1,
+                 ranks_only=False, prefer_horizontal=1, mask=None, scale=1,
                  color_func=random_color_func, max_words=200, stopwords=None,
                  random_state=None, background_color='black', max_font_size=None):
         if stopwords is None:
@@ -292,15 +292,17 @@ class WordCloud(object):
 
         words = sorted(d3.items(), key=item1, reverse=True)
         words = words[:self.max_words]
+
         maximum = float(max(d3.values()))
         for i, (word, count) in enumerate(words):
             words[i] = word, count / maximum
 
+        print(words)
         self.words_ = words
 
         return words
 
-    def generate(self, text):
+    def generate(self, text, tuplesprovided = None):
         """Generate wordcloud from text.
 
         Calls process_text and fit_words.
@@ -309,8 +311,13 @@ class WordCloud(object):
         -------
         self
         """
-        self.process_text(text)
-        self.fit_words(self.words_)
+
+        if tuplesprovided == False or None:
+            self.process_text(text)
+            self.fit_words(self.words_)
+        else:
+            self.fit_words(text)
+
         return self
 
     def _check_generated(self):
